@@ -23,6 +23,7 @@ Donations are optional and help fund maintenance and future updates.
 
 - Donatty: [donatty.com/xbronde](https://donatty.com/xbronde)
 - Bitcoin (BTC): `13mQGzbcyaW5RtfzMvL4dxtzANHnAS2zbC`
+- ISK: serg Xbronde
 
 ## Data and limitations
 
