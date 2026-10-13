@@ -1,0 +1,109 @@
+{
+  "name": "eve-local-intel",
+  "version": "1.1.13",
+  "description": "Free desktop intelligence companion for EVE Online",
+  "main": "./out/main/index.js",
+  "author": "Fly Safe contributors",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run tests",
+    "test:watch": "vitest tests",
+    "test:server": "npm --prefix server test",
+    "build:relay": "esbuild server/src/relay-main.ts --bundle --platform=node --target=node22 --format=esm --legal-comments=none --outfile=server/relay-dist/fly-safe-relay.mjs",
+    "build": "npm run typecheck && electron-vite build",
+    "package:mac": "npm run build && electron-builder --mac dmg --publish never",
+    "package:win": "npm run build && electron-builder --win nsis --x64 --publish never",
+    "package:win:dir": "npm run build && electron-builder --win --x64 --dir",
+    "postinstall": "node node_modules/electron/install.js && electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "electron-updater": "^6.8.9",
+    "jose": "6.1.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "24.10.14",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.2.0",
+    "electron": "43.4.1",
+    "electron-builder": "26.15.3",
+    "electron-vite": "5.0.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.11"
+  },
+  "build": {
+    "appId": "dev.evelocalintel.app",
+    "productName": "Fly Safe",
+    "afterPack": "scripts/after-pack.cjs",
+    "asar": true,
+    "npmRebuild": false,
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "hardenedRuntime": false,
+      "forceCodeSigning": false,
+      "notarize": false,
+      "strictVerify": false
+    },
+    "win": {
+      "extraFiles": [
+        {
+          "from": "scripts/windows-clean-uninstall.ps1",
+          "to": "windows-clean-uninstall.ps1"
+        }
+      ],
+      "forceCodeSigning": false,
+      "signAndEditExecutable": false,
+      "verifyUpdateCodeSignature": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "guid": "702e68f0-3e12-547a-a38c-ac078bc9afc2",
+      "include": "build/installer.nsh",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Fly Safe",
+      "deleteAppDataOnUninstall": true,
+      "artifactName": "Fly-Safe-Setup-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "Fly Safe ${version}",
+      "artifactName": "Fly-Safe-${version}-${arch}.${ext}"
+    },
+    "artifactName": "Fly-Safe-${version}-${arch}.${ext}"
+  }
+}

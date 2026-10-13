@@ -1,0 +1,3 @@
+e87d22a2952fcc2784ed94470215ecdbf86cf0b282a0ae7e309fda5bae1bbcd4  Fly-Safe-Setup-0.10.1-x64.exe
+e4e13b14a825e1e88ae92279cb5b232bea017cde15ef38ca160c999cbb58e308  Fly-Safe-0.10.1-x64.zip
+d95746af8f097f87d52bd700679868a2fec637a3b577d7d42921bf473af8da08  windows-clean-uninstall.ps1

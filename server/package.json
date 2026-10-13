@@ -1,0 +1,28 @@
+{
+  "name": "@fly-safe/entitlement-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/index.js",
+    "start:relay": "node dist/src/relay-main.js",
+    "dev": "node --watch --experimental-strip-types src/index.ts",
+    "dev:relay": "node --watch --experimental-strip-types src/relay-main.ts",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "jose": "6.1.2",
+    "lossless-json": "4.3.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "24.10.14",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,76 @@
+name: Publish restored Fly Safe for macOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/publish-macos.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-safe-macos-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run complete regression suite
+        run: npm test
+      - name: Check and package macOS Apple Silicon app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npm run package:mac
+      - name: Verify and checksum installer
+        run: |
+          hdiutil verify dist/Fly-Safe-1.1.13-arm64.dmg
+          cd dist
+          shasum -a 256 Fly-Safe-1.1.13-arm64.dmg > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fly-safe-macos-1.1.13
+          path: |
+            dist/Fly-Safe-1.1.13-arm64.dmg
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: fly-safe-macos-1.1.13
+          path: release-assets
+      - name: Publish macOS preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1.1.13 \
+            release-assets/Fly-Safe-1.1.13-arm64.dmg \
+            release-assets/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title 'Fly Safe 1.1.13 — restored preview' \
+            --notes-file PUBLISH-1.1.13.md \
+            --prerelease \
+            --latest=false

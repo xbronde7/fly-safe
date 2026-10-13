@@ -1,0 +1,39 @@
+[Unit]
+Description=Fly Safe zKillboard/R2Z2 relay
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=fly-safe-relay
+Group=fly-safe-relay
+WorkingDirectory=/opt/fly-safe-relay/current
+EnvironmentFile=/etc/fly-safe-relay.env
+ExecStart=/opt/fly-safe-relay/runtime/bin/node /opt/fly-safe-relay/current/fly-safe-relay.mjs
+Restart=on-failure
+RestartSec=3s
+TimeoutStopSec=20s
+UMask=0027
+LimitNOFILE=4096
+TasksMax=64
+MemoryMax=256M
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectHostname=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

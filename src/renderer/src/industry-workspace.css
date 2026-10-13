@@ -1,0 +1,134 @@
+.industry-shell { display: grid; gap: 20px; min-width: 0; }
+.industry-shell > *, .industry-opportunities > *, .industry-fields > * { min-width: 0; }
+.industry-character { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding: 16px; background: #16212c; border: 1px solid #334250; border-radius: 12px; }
+.industry-character small { flex-basis: 100%; color: #a7b8c9; }
+.industry-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; }
+.industry-fields label { display: grid; gap: 7px; font-size: 13px; color: #c5d1dd; }
+.industry-fields input, .industry-fields select { width: 100%; min-width: 0; padding: 10px; border: 1px solid #435362; border-radius: 7px; color: #e5edf5; background: #111b25; }
+.industry-settings { display: grid; gap: 18px; }
+.industry-settings details p, .industry-result-context p { color: #aabccd; font-size: 13px; }
+.industry-settings details .industry-fields { margin-top: 16px; }
+.industry-check { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.industry-fields .industry-check { display: flex; }
+.industry-check input[type="checkbox"] { width: 16px; height: 16px; padding: 0; margin: 0; flex: 0 0 auto; accent-color: #65cebe; }
+.industry-jobs summary { cursor: pointer; font-weight: 600; }
+.industry-actions, .industry-filter-checks { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.industry-progress { display: grid; gap: 8px; }
+.industry-progress progress { width: 100%; accent-color: #65cebe; }
+.industry-progress small { color: #aabccd; }
+.industry-opportunities { display: grid; gap: 14px; }
+.industry-scan-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 16px; background: #16212c; border-radius: 12px; }
+.industry-scan-summary p { flex-basis: 100%; margin: 0; font-size: 13px; color: #aabccd; }
+.industry-blueprint-name { font-size: 13px; color: #aabccd; margin: 0 0 8px; overflow-wrap: anywhere; }
+.industry-required-skills { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; margin: 16px 0; }
+.industry-required-skills strong { color: #b5c5d5; }
+.industry-opportunity { padding: 20px; background: #141e29; border: 1px solid #334451; border-radius: 12px; }
+.industry-opportunity header { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.industry-opportunity h3 { margin: 0 0 7px; }
+.industry-opportunity header span { font-size: 13px; color: #aabccd; }
+.industry-opportunity header > strong { font-size: 22px; text-align: right; }
+.industry-opportunity header small { display: block; font-size: 12px; color: #aabccd; font-weight: normal; margin-top: 6px; }
+.industry-economics { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 14px; margin: 20px 0; }
+.industry-economics > span { display: grid; gap: 6px; color: #b5c5d5; font-size: 12px; }
+.industry-economics strong { color: #e3edf7; font-size: 14px; }
+.industry-positive { color: #6de3b3; }
+.industry-negative { color: #ff9696; }
+.industry-warning { color: #e6c186; font-size: 13px; }
+.industry-opportunity details { font-size: 13px; color: #b5c5d5; }
+.industry-opportunity summary, .industry-settings summary, .industry-result-context summary { cursor: pointer; }
+.industry-material-list { display: grid; gap: 8px; margin: 15px 0; }
+.industry-material-list > div { display: grid; grid-template-columns: minmax(150px, 2fr) 1fr minmax(120px, 1fr); gap: 12px; }
+.industry-job { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; padding: 16px 0; border-top: 1px solid #334451; }
+.industry-job small { color: #aabccd; }
+.industry-totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 20px 0; }
+.industry-totals > div { display: grid; gap: 8px; padding: 16px; border: 1px solid; border-radius: 10px; }
+.industry-totals strong { font-size: clamp(16px, 1.5vw, 24px); overflow-wrap: anywhere; }
+.industry-totals small { font-size: 12px; }
+.industry-revenue { background: #112d2b; border-color: #2d6861 !important; color: #8de4d6; }
+.industry-cost { background: #30251c; border-color: #705335 !important; color: #f2c994; }
+.industry-profit { background: #113025; border-color: #328263 !important; color: #8aefbb; }
+.industry-loss { background: #301d25; border-color: #83454e !important; color: #ffa9b2; }
+.industry-capacity { display: grid; gap: 8px; padding: 14px; background: #0e1720; border-left: 3px solid #55bec2; border-radius: 6px; font-size: 13px; }
+.industry-capacity small { color: #aabccd; }
+.industry-capacity button { justify-self: start; }
+.industry-factories { scroll-margin-top: 130px; }
+.industry-factory-table { overflow-x: auto; max-height: 560px; margin: 15px 0; }
+.industry-factory-table table { width: 100%; min-width: 1050px; table-layout: auto; border-collapse: collapse; font-size: 13px; }
+.industry-factory-table th, .industry-factory-table td { text-align: left; padding: 12px; border-bottom: 1px solid #334451; }
+.industry-factory-table th { position: sticky; top: 0; background: #16212c; }
+.industry-factory-table th:nth-child(n) { width: auto; padding: 12px; white-space: normal; }
+.industry-factory-table small { display: block; color: #aabccd; margin-top: 6px; }
+@media (max-width: 850px) { .industry-totals { grid-template-columns: 1fr; } }
+@media (max-width: 650px) { .industry-material-list > div { grid-template-columns: 1fr; border-bottom: 1px solid #334451; padding-bottom: 8px; } }
+.industry-purchase-cost { border: 1px solid #426e5f; background: #10241d; border-radius: 12px; padding: 16px; margin-block: 16px; }
+.industry-purchase-cost h4 { margin: 0 0 12px; color: #a8efd1; }
+.industry-ledger-scroll { max-width: 100%; overflow-x: auto; }
+.industry-ledger-scroll table { width: 100%; min-width: 800px; table-layout: auto; }
+.industry-ledger-scroll table th, .industry-ledger-scroll table td { width: auto; padding: 10px; }
+.industry-demand { display: grid; gap: 6px; padding: 14px; border: 1px solid #46657c; border-radius: 10px; background: #112635; max-width: 470px; }
+.industry-demand strong { color: #9de3fa; font-size: 22px; }
+.industry-demand small { color: #b7cbd9; font-size: 12px; }
+.industry-plan-investment { display: flex; flex-wrap: wrap; gap: 12px 22px; padding: 14px 0; color: #ddc7a2; }
+.industry-plan-investment small { flex-basis: 100%; color: #aabccd; }
+.industry-plan-table { max-width: 100%; overflow-x: auto; margin: 12px 0; }
+.industry-plan-table table { width: 100%; min-width: 950px; table-layout: auto; border-collapse: separate; border-spacing: 0 8px; }
+.industry-plan-table th, .industry-plan-table td { width: auto; padding: 14px; text-align: left; background: #0e1720; vertical-align: top; white-space: normal; }
+.industry-plan-table th { font-size: 13px; color: #b1c6d5; }
+.industry-plan-table td { font-size: 14px; }
+.industry-plan-table td strong { display: block; font-size: 17px; }
+.industry-plan-table td small { display: block; font-size: 12px; margin-top: 7px; color: #b5c5d5; }
+.industry-plan-table .industry-profit-cell { background: #103125; color: #8aefbb; border-left: 3px solid #328263; }
+.industry-plan-table .industry-sell-estimate { background: #182d35; border-left-color: #558c99; color: #95d4e5; }
+.industry-plan-table .industry-loss-cell { background: #301d25; color: #ffa9b2; border-left: 3px solid #83454e; }
+.industry-plan-details { margin-top: 14px; }
+.industry-plan-details > summary { padding: 10px; background: #192b37; border-radius: 6px; }
+.industry-plan-details > article { margin-top: 10px; }
+.industry-monitor { display: grid; gap: 12px; }
+.industry-monitor h2 { margin: 0; }
+.industry-monitor > p { margin: 0; }
+.industry-monitor summary { cursor: pointer; }
+.industry-production-editor { padding: 16px 0; }
+.industry-production-editor .industry-ledger-scroll td small { display: block; color: #aabccd; margin-top: 6px; }
+.industry-production-editor .industry-ledger-scroll input { max-width: 180px; }
+.industry-production-editor input:not([type="checkbox"]) { background: #111e28; color: #e3edf7; border: 1px solid #426071; border-radius: 6px; padding: 10px; font: inherit; min-width: 80px; }
+.industry-produced .industry-buy-metrics { margin-top: 16px; }
+.industry-opportunity.industry-produced .industry-buy-metrics > div strong { color: #f2c994; }
+.industry-produced td small { display: block; margin-top: 4px; color: #8c9aaf; }
+.industry-produced-market { margin:18px 0; padding:16px; border:1px solid #334a53; border-radius:10px; background:#0c1820; }
+.industry-produced-market>header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.industry-produced-market h4 { margin:0 0 8px; }
+.industry-produced-market-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px; }
+.industry-produced-market-pair>div { min-width:0; padding:14px; border:1px solid #263c47; border-radius:8px; }
+.industry-produced-market-pair>div>strong { display:block; font-size:24px; overflow-wrap:anywhere; }
+.industry-produced-market small { display:block; color:#9db0c3; margin-top:5px; }
+.industry-produced-market summary { cursor:pointer; margin:12px 0; color:#b8cadb; }
+@media(max-width:650px) { .industry-produced-market>header { align-items:stretch; flex-direction:column; } .industry-produced-market-pair { grid-template-columns:1fr; } }
+.industry-buy-decision { display: grid; gap: 12px; padding: 18px; margin: 16px 0; background: #10251f; border: 1px solid #328263; border-radius: 10px; }
+.industry-buy-decision > strong { color: #8aefbb; }
+.industry-buy-decision.is-blocked { background: #281e24; border-color: #83454e; }
+.industry-buy-decision.is-blocked > strong { color: #ffa9b2; }
+.industry-buy-decision small { color: #b5c5d5; font-size: 12px; }
+.industry-buy-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.industry-buy-metrics > div { display: grid; gap: 8px; align-content: start; }
+.industry-buy-metrics strong { font-size: clamp(18px, 1.8vw, 28px); overflow-wrap: anywhere; }
+.industry-buy-metrics > div:first-child strong { color: #8aefbb; }
+.industry-buy-metrics > div:last-child strong { color: #f2c994; }
+.industry-plan-comparison { margin-top: 18px; }
+.industry-plan-comparison > summary { padding: 12px; border: 1px solid #334451; border-radius: 6px; }
+.industry-mass-summary { border:1px solid #38796c; background:#0d1d20; }
+.industry-mass-summary>header { display:flex; gap:16px; justify-content:space-between; align-items:center; }
+.industry-mass-summary>header>strong { font-size:26px; white-space:nowrap; }
+.industry-mass-summary h2 { margin:8px 0; }
+.industry-mass-summary .industry-buy-metrics { padding:18px; border:1px solid #31564c; border-radius:10px; background:#10251f; }
+.industry-mass-sales { padding:12px 0; }
+.industry-mass-table { max-height:480px; overflow:auto; margin:16px 0; }
+.industry-mass-table table { min-width:760px; table-layout:auto; }
+.industry-mass-table th:nth-child(n),.industry-mass-table td:nth-child(n) { width:auto; padding:12px; text-align:left; border-bottom:1px solid #334451; }
+.industry-mass-table th { position:sticky; top:0; background:#16252c; }
+.industry-mass-table small,.industry-mass-job header strong small { display:block; color:#afc3cf; margin-top:6px; font-size:12px; font-weight:400; }
+.industry-mass-summary textarea { display:block; width:100%; min-height:160px; margin:12px 0; padding:12px; background:#0c141b; color:#e3edf7; border:1px solid #426071; border-radius:6px; }
+.industry-mass-summary summary,.industry-mass-job summary { cursor:pointer; padding:10px 0; }
+.industry-mass-job header>strong { min-width:180px; text-align:right; }
+.industry-mass-job header p { overflow-wrap:anywhere; }
+@media(max-width:700px) { .industry-mass-summary>header { flex-direction:column; align-items:flex-start; } .industry-mass-job header { flex-direction:column; align-items:flex-start; } .industry-mass-job header>strong { text-align:left; } }
+@media (max-width: 800px) { .industry-buy-metrics { grid-template-columns: 1fr; } }
