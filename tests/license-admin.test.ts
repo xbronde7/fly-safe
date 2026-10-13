@@ -1,3 +1,4 @@
+import { expectPrivatePathMode } from './file-permissions'
 import { execFile } from 'node:child_process'
 import { mkdtemp, readFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -51,7 +52,7 @@ describe('license admin CLI', () => {
       customer: 'Test Customer',
       expiresAt: null
     })
-    expect((await stat(privateKeyPath)).mode & 0o777).toBe(0o600)
+    await expectPrivatePathMode(privateKeyPath, 0o600)
     expect(token).not.toContain('Test Customer')
   })
 

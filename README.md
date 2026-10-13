@@ -8,8 +8,8 @@ Fly Safe turns the Local chat roster, D-scan, and Probe Scanner data you copy in
 
 Installers are available in [GitHub Releases](https://github.com/xbronde7/fly-safe/releases):
 
-- macOS Apple Silicon: [Fly Safe 1.1.13 preview](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.13), `Fly-Safe-1.1.13-arm64.dmg`.
-- Windows 10/11 x64: [Fly Safe 1.0.0](https://github.com/xbronde7/fly-safe/releases/tag/v1.0.0), `Fly-Safe-Setup-1.0.0-x64.exe`.
+- macOS Apple Silicon: [Fly Safe 1.1.13](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.13), `Fly-Safe-1.1.13-arm64.dmg`.
+- Windows 10/11 x64: [Fly Safe 1.1.13](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.13), `Fly-Safe-Setup-1.1.13-x64.exe`.
 
 ## Free and unlocked
 
@@ -41,7 +41,7 @@ All materials are newly bought at SELL; existing stock/purchases do not reduce
 this planning budget. The wallet ledger and finished-goods costing are unchanged.
 Production defaults to Jita; compare NPC factories within 10 gate jumps. See
 [manufacturing documentation](INDUSTRY.md) for permissions, formulas and limitations.
-Version 1.1.13 is a restored preview. All 867 regression tests, TypeScript checks,
+Version 1.1.13 is the current main release. All 867 regression tests, TypeScript checks,
 and production builds pass. See [publication validation](PUBLISH-1.1.13.md).
 
 All local features are included. There is no license key, paid plan, subscription, or payment verification.
@@ -79,9 +79,10 @@ npm run dev
 npm run typecheck
 npm test
 npm run package:mac
+npm run package:win
 ```
 
 The optional relay server has its own `server/package.json` and README.
-The macOS publication workflow builds the restored source and publishes a
-prerelease after packaging succeeds. It does not reuse or overwrite the older
-1.0.0 installers.
+The publication workflows run the complete regression suite before packaging.
+The Windows workflow also checks packaged and installed native SQLite, adds the
+Windows x64 installer to 1.1.13, and marks the release as the latest stable version.

@@ -1,3 +1,4 @@
+import { expectPrivatePathMode } from './file-permissions'
 import { mkdtemp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -138,8 +139,8 @@ describe('AtomicFileBlobStore', () => {
 
     const stored = await store.read()
     expect(candidates.some((candidate) => Buffer.from(candidate).equals(Buffer.from(stored!)))).toBe(true)
-    expect((await stat(paths.refreshToken)).mode & 0o777).toBe(0o600)
-    expect((await stat(paths.directory)).mode & 0o777).toBe(0o700)
+    await expectPrivatePathMode(paths.refreshToken, 0o600)
+    await expectPrivatePathMode(paths.directory, 0o700)
     expect((await readdir(paths.directory)).filter((name) => name.endsWith('.tmp'))).toEqual([])
   })
 
@@ -185,7 +186,7 @@ describe('EveAccountService', () => {
     const configText = await readFile(paths.config, 'utf8')
     expect(JSON.parse(configText)).toEqual({ version: 1, clientId: 'public-client-id' })
     expect(configText).not.toContain('refresh-public-client-id')
-    expect((await stat(paths.config)).mode & 0o777).toBe(0o600)
+    await expectPrivatePathMode(paths.config, 0o600)
 
     const connected = await service.connect()
     expect(connected).toMatchObject({
@@ -201,7 +202,7 @@ describe('EveAccountService', () => {
 
     const encryptedToken = await readFile(paths.refreshToken)
     expect(encryptedToken.toString('utf8')).not.toContain('refresh-public-client-id')
-    expect((await stat(paths.refreshToken)).mode & 0o777).toBe(0o600)
+    await expectPrivatePathMode(paths.refreshToken, 0o600)
 
     const authorized = await service.getAuthorizedSession()
     expect(authorized).toMatchObject({

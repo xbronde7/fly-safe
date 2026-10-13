@@ -22,10 +22,16 @@ publication on 2026-10-13, with the regression suite repaired before publication
 ## Distribution
 
 GitHub Actions runs the full regression suite, rebuilds the macOS Apple Silicon installer from this source,
-publishes it as the `v1.1.13` prerelease, and includes its SHA-256 checksum.
+publishes it as `v1.1.13`, and includes its SHA-256 checksum.
 A rebuilt DMG is a new build and is not expected to match the original local DMG
-bit for bit. No new Windows 1.1.13 build is claimed. The previous stable release
-is left in place.
+bit for bit. The Windows workflow runs the complete regression suite on Windows,
+builds the x64 NSIS installer, and checks native SQLite in both the packaged app
+and a silent installation. It publishes `Fly-Safe-Setup-1.1.13-x64.exe`, updates
+checksums for both platforms, and makes 1.1.13 the latest stable release.
+
+POSIX permission assertions apply on macOS/Linux. Windows uses NTFS ACLs rather
+than POSIX mode bits; file-kind, encryption, contents, backup, and atomic-write
+checks continue to run on both platforms.
 
 Original recovered DMG SHA-256 (for archive identification only):
 `eedf02bf94a91e22beec902eb73482b4fceff26263fca2d96cbbc040dd82343c`.

@@ -1,3 +1,4 @@
+import { expectPrivatePathMode } from './file-permissions'
 import { generateKeyPairSync, sign } from 'node:crypto'
 import { mkdtemp, readFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -306,8 +307,8 @@ describe('LicenseService', () => {
     const encrypted = await readFile(paths.token)
     expect(encrypted.toString('utf8')).not.toContain(token)
     expect(encrypted.toString('utf8')).not.toContain('Тестовый пилот')
-    expect((await stat(paths.token)).mode & 0o777).toBe(0o600)
-    expect((await stat(paths.directory)).mode & 0o777).toBe(0o700)
+    await expectPrivatePathMode(paths.token, 0o600)
+    await expectPrivatePathMode(paths.directory, 0o700)
 
     const restored = new LicenseService({
       dataDirectory,
@@ -345,7 +346,7 @@ describe('LicenseService', () => {
     await expect(service.load()).resolves.toMatchObject({ state: 'missing' })
     await expect(service.activate(token)).resolves.toMatchObject({ state: 'active' })
     expect(await readFile(service.storagePaths.token, 'utf8')).toBe(token)
-    expect((await stat(service.storagePaths.token)).mode & 0o777).toBe(0o600)
+    await expectPrivatePathMode(service.storagePaths.token, 0o600)
 
     const restored = new LicenseService({
       dataDirectory,

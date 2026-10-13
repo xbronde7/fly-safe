@@ -1,3 +1,4 @@
+import { expectPrivatePathMode } from './file-permissions'
 import { mkdtemp, readdir, readFile, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -239,9 +240,8 @@ describe('EveMultiAccountService', () => {
     expect(firstEncrypted.equals(secondEncrypted)).toBe(false)
     expect(firstEncrypted.toString('utf8')).not.toContain('refresh|')
     expect(secondEncrypted.toString('utf8')).not.toContain('refresh|')
-    expect((await stat(firstPath)).mode & 0o777).toBe(0o600)
-    expect((await stat(getEveMultiAccountStoragePaths(dataDirectory).tokensDirectory)).mode & 0o777)
-      .toBe(0o700)
+    await expectPrivatePathMode(firstPath, 0o600)
+    await expectPrivatePathMode(getEveMultiAccountStoragePaths(dataDirectory).tokensDirectory, 0o700)
 
     const registryText = await readFile(
       getEveMultiAccountStoragePaths(dataDirectory).registry,
@@ -358,11 +358,11 @@ describe('EveMultiAccountService', () => {
     )
     expect(backupName).toBeDefined()
     const backupDirectory = join(dataDirectory, backupName!)
-    expect((await stat(backupDirectory)).mode & 0o777).toBe(0o700)
+    await expectPrivatePathMode(backupDirectory, 0o700)
     expect(JSON.parse(await readFile(join(backupDirectory, 'registry.json'), 'utf8')))
       .toMatchObject({ clientId: 'old-fly-safe-client', activeCharacterId: 202 })
-    expect((await stat(join(backupDirectory, 'registry.json'))).mode & 0o777).toBe(0o600)
-    expect((await stat(join(backupDirectory, 'tokens', '101.bin'))).mode & 0o777).toBe(0o600)
+    await expectPrivatePathMode(join(backupDirectory, 'registry.json'), 0o600)
+    await expectPrivatePathMode(join(backupDirectory, 'tokens', '101.bin'), 0o600)
     expect((await readFile(join(backupDirectory, 'tokens', '101.bin'))).equals(oldFirstToken))
       .toBe(true)
     expect((await readFile(join(backupDirectory, 'tokens', '202.bin'))).equals(oldSecondToken))
