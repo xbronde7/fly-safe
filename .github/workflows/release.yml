@@ -52,8 +52,18 @@ jobs:
         env:
           ELECTRON_RUN_AS_NODE: '1'
         run: |
-          & 'dist/win-unpacked/Fly Safe.exe' 'scripts/verify-packaged-sqlite.cjs'
-          if ($LASTEXITCODE -ne 0) { throw 'Packaged SQLite smoke failed' }
+          function Test-PackagedSqlite([string]$exe, [string]$label) {
+            $script = Join-Path $PWD 'scripts/verify-packaged-sqlite.cjs'
+            $stdout = Join-Path $env:RUNNER_TEMP "$label-sqlite-stdout.log"
+            $stderr = Join-Path $env:RUNNER_TEMP "$label-sqlite-stderr.log"
+            $child = Start-Process -FilePath $exe -ArgumentList @("`"$script`"") -Wait -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+            Get-Content -LiteralPath $stdout
+            Get-Content -LiteralPath $stderr
+            if ($child.ExitCode -ne 0) { throw "$label SQLite process failed: $($child.ExitCode)" }
+            $result = Get-Content -Raw -LiteralPath $stdout | ConvertFrom-Json
+            if ($result.sqlite -ne 'ok' -or $result.version -ne '1.1.14') { throw "$label SQLite result invalid" }
+          }
+          Test-PackagedSqlite (Join-Path $PWD 'dist/win-unpacked/Fly Safe.exe') 'packaged'
           $installer = Join-Path $PWD 'dist/Fly-Safe-Setup-1.1.14-x64.exe'
           $installDir = Join-Path $env:RUNNER_TEMP 'fly-safe-install-smoke'
           $process = Start-Process -FilePath $installer -ArgumentList @('/S', "/D=$installDir") -Wait -PassThru
@@ -61,8 +71,7 @@ jobs:
           $installedExe = Join-Path $installDir 'Fly Safe.exe'
           if (-not (Test-Path -LiteralPath $installedExe)) { throw 'Installed app missing' }
           if (-not (Test-Path -LiteralPath (Join-Path $installDir 'windows-clean-uninstall.ps1'))) { throw 'Cleanup tool missing' }
-          & $installedExe 'scripts/verify-packaged-sqlite.cjs'
-          if ($LASTEXITCODE -ne 0) { throw 'Installed SQLite smoke failed' }
+          Test-PackagedSqlite $installedExe 'installed'
       - name: Verify macOS installer
         if: runner.os == 'macOS'
         run: hdiutil verify dist/Fly-Safe-1.1.14-arm64.dmg
