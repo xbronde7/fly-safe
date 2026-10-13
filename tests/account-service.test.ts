@@ -156,6 +156,37 @@ describe('AtomicFileBlobStore', () => {
 
     await expect(stat(paths.refreshToken)).rejects.toMatchObject({ code: 'ENOENT' })
   })
+
+  it('orders writes, reads, and logout clears across adapters sharing one file', async () => {
+    const dataDirectory = await temporaryDirectory()
+    const paths = getEveAccountStoragePaths(dataDirectory)
+    const first = new AtomicFileBlobStore(paths.refreshToken)
+    const second = new AtomicFileBlobStore(paths.refreshToken)
+    const value = Uint8Array.of(1, 2, 3)
+
+    const write = first.write(value)
+    const read = second.read()
+    const clear = second.clear()
+    await expect(read).resolves.toEqual(value)
+    await Promise.all([write, clear])
+    expect(await first.read()).toBeNull()
+    expect((await readdir(paths.directory)).filter((name) => name.endsWith('.tmp'))).toEqual([])
+  })
+
+  it('allows later operations to recover after a failed atomic write', async () => {
+    const dataDirectory = await temporaryDirectory()
+    const paths = getEveAccountStoragePaths(dataDirectory)
+    const store = new AtomicFileBlobStore(paths.refreshToken)
+    await mkdir(paths.refreshToken, { recursive: true })
+    await expect(store.write(Uint8Array.of(1))).rejects.toMatchObject({
+      code: 'secure_storage_failed'
+    })
+    await rm(paths.refreshToken, { recursive: true })
+
+    await store.write(Uint8Array.of(2))
+    expect(await store.read()).toEqual(Uint8Array.of(2))
+    expect((await readdir(paths.directory)).filter((name) => name.endsWith('.tmp'))).toEqual([])
+  })
 })
 
 describe('EveAccountService', () => {

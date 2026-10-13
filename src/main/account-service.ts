@@ -31,6 +31,7 @@ const PRIVATE_FILE_MODE = 0o600
 const MAX_CONFIG_BYTES = 8 * 1_024
 const MAX_ENCRYPTED_TOKEN_BYTES = 256 * 1_024
 const CLIENT_ID_PATTERN = /^[A-Za-z0-9._~-]{3,256}$/
+const privateFileOperations = new Map<string, Promise<void>>()
 
 export type EveAccountErrorCode =
   | 'invalid_config'
@@ -137,7 +138,7 @@ export class AtomicFileBlobStore implements EncryptedBlobStore {
 
   async clear(): Promise<void> {
     try {
-      await unlinkIfPresent(this.filePath)
+      await serializePrivateFileOperation(this.filePath, () => unlinkIfPresent(this.filePath))
     } catch {
       throw new EveSsoError('secure_storage_failed', 'Could not remove local EVE SSO token')
     }
@@ -419,6 +420,10 @@ function validateClientId(value: unknown): string {
 }
 
 async function readOptionalPrivateFile(filePath: string, maxBytes: number): Promise<Uint8Array | null> {
+  return serializePrivateFileOperation(filePath, () => readPrivateFile(filePath, maxBytes))
+}
+
+async function readPrivateFile(filePath: string, maxBytes: number): Promise<Uint8Array | null> {
   let bytes: Buffer
   try {
     bytes = await readFile(filePath)
@@ -433,6 +438,10 @@ async function readOptionalPrivateFile(filePath: string, maxBytes: number): Prom
 }
 
 async function atomicWritePrivateFile(filePath: string, value: Uint8Array): Promise<void> {
+  return serializePrivateFileOperation(filePath, () => writePrivateFileAtomically(filePath, value))
+}
+
+async function writePrivateFileAtomically(filePath: string, value: Uint8Array): Promise<void> {
   const directory = dirname(filePath)
   await mkdir(directory, { recursive: true, mode: PRIVATE_DIRECTORY_MODE })
   await chmod(directory, PRIVATE_DIRECTORY_MODE)
@@ -457,6 +466,18 @@ async function atomicWritePrivateFile(filePath: string, value: Uint8Array): Prom
     if (handle) await handle.close().catch(() => undefined)
     await unlinkIfPresent(temporaryPath).catch(() => undefined)
   }
+}
+
+function serializePrivateFileOperation<T>(filePath: string, operation: () => Promise<T>): Promise<T> {
+  const absolutePath = resolve(filePath)
+  const key = process.platform === 'win32' ? absolutePath.toLowerCase() : absolutePath
+  const previous = privateFileOperations.get(key) ?? Promise.resolve()
+  const result = previous.then(operation)
+  const settled = result.then(() => undefined, () => undefined)
+  privateFileOperations.set(key, settled)
+  return result.finally(() => {
+    if (privateFileOperations.get(key) === settled) privateFileOperations.delete(key)
+  })
 }
 
 async function unlinkIfPresent(filePath: string): Promise<void> {

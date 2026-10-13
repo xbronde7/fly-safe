@@ -8,12 +8,13 @@ Fly Safe turns the Local chat roster, D-scan, and Probe Scanner data you copy in
 
 Installers are available in [GitHub Releases](https://github.com/xbronde7/fly-safe/releases):
 
-- macOS Apple Silicon: [Fly Safe 1.1.13](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.13), `Fly-Safe-1.1.13-arm64.dmg`.
-- Windows 10/11 x64: [Fly Safe 1.1.13](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.13), `Fly-Safe-Setup-1.1.13-x64.exe`.
+- macOS Apple Silicon: [Fly Safe 1.1.14](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.14), `Fly-Safe-1.1.14-arm64.dmg`.
+- Windows 10/11 x64: [Fly Safe 1.1.14](https://github.com/xbronde7/fly-safe/releases/tag/v1.1.14), `Fly-Safe-Setup-1.1.14-x64.exe`.
 
 ## Free and unlocked
 
-Restored version **1.1.13** adds a separate nine-line mass-production
+Version **1.1.14** fixes concurrent encrypted-token storage on Windows and includes
+the restored nine-line mass-production planner. Version **1.1.13** added a separate nine-line mass-production
 planner: long multi-run jobs, distinct blueprints, one shared material/BUY basket,
 full contract/BPO cash outlay, common budget and regional demand limits. The BPC
 monitor stays single-run. Defaults: 24-hour cycle, jobs at least four hours/two runs.
@@ -41,8 +42,8 @@ All materials are newly bought at SELL; existing stock/purchases do not reduce
 this planning budget. The wallet ledger and finished-goods costing are unchanged.
 Production defaults to Jita; compare NPC factories within 10 gate jumps. See
 [manufacturing documentation](INDUSTRY.md) for permissions, formulas and limitations.
-Version 1.1.13 is the current main release. All 867 regression tests, TypeScript checks,
-and production builds pass. See [publication validation](PUBLISH-1.1.13.md).
+Version 1.1.14 is the current main release. All 869 regression tests, TypeScript checks,
+and production builds pass. See [publication validation](PUBLISH-1.1.14.md).
 
 All local features are included. There is no license key, paid plan, subscription, or payment verification.
 
@@ -84,5 +85,5 @@ npm run package:win
 
 The optional relay server has its own `server/package.json` and README.
 The publication workflows run the complete regression suite before packaging.
-The Windows workflow also checks packaged and installed native SQLite, adds the
-Windows x64 installer to 1.1.13, and marks the release as the latest stable version.
+The Windows job also checks packaged and installed native SQLite. Both platform
+jobs must pass before the workflow publishes the latest stable release.

@@ -1,6 +1,6 @@
 {
   "name": "eve-local-intel",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "Free desktop intelligence companion for EVE Online",
   "main": "./out/main/index.js",
   "author": "Fly Safe contributors",

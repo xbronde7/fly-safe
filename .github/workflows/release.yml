@@ -1,23 +1,34 @@
-name: Publish Windows installer and make Fly Safe 1.1.13 latest
+name: Build Windows and macOS and publish latest Fly Safe
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - .github/workflows/publish-windows.yml
-      - .gitattributes
+      - .github/workflows/release.yml
 
 permissions:
   contents: read
 
 concurrency:
-  group: fly-safe-windows-release
+  group: fly-safe-release
   cancel-in-progress: false
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            package: package:win
+            asset: Fly-Safe-Setup-1.1.14-x64.exe
+          - os: macos-latest
+            platform: macos
+            package: package:mac
+            asset: Fly-Safe-1.1.14-arm64.dmg
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
@@ -29,18 +40,21 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
-      - name: Run complete regression suite on Windows
+      - name: Run complete regression suite
         run: npm test
-      - name: Check and package Windows x64 installer
-        run: npm run package:win
-      - name: Verify packaged SQLite and installed app
+      - name: Check and package installer
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npm run ${{ matrix.package }}
+      - name: Verify Windows packaged SQLite and installed app
+        if: runner.os == 'Windows'
         shell: pwsh
         env:
           ELECTRON_RUN_AS_NODE: '1'
         run: |
           & 'dist/win-unpacked/Fly Safe.exe' 'scripts/verify-packaged-sqlite.cjs'
           if ($LASTEXITCODE -ne 0) { throw 'Packaged SQLite smoke failed' }
-          $installer = Join-Path $PWD 'dist/Fly-Safe-Setup-1.1.13-x64.exe'
+          $installer = Join-Path $PWD 'dist/Fly-Safe-Setup-1.1.14-x64.exe'
           $installDir = Join-Path $env:RUNNER_TEMP 'fly-safe-install-smoke'
           $process = Start-Process -FilePath $installer -ArgumentList @('/S', "/D=$installDir") -Wait -PassThru
           if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
@@ -49,18 +63,13 @@ jobs:
           if (-not (Test-Path -LiteralPath (Join-Path $installDir 'windows-clean-uninstall.ps1'))) { throw 'Cleanup tool missing' }
           & $installedExe 'scripts/verify-packaged-sqlite.cjs'
           if ($LASTEXITCODE -ne 0) { throw 'Installed SQLite smoke failed' }
-      - name: Checksum Windows installer
-        shell: pwsh
-        run: |
-          $file = 'dist/Fly-Safe-Setup-1.1.13-x64.exe'
-          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $file).Hash.ToLowerInvariant()
-          "$hash  Fly-Safe-Setup-1.1.13-x64.exe" | Set-Content -Encoding utf8NoBOM dist/SHA256SUMS-windows.txt
+      - name: Verify macOS installer
+        if: runner.os == 'macOS'
+        run: hdiutil verify dist/Fly-Safe-1.1.14-arm64.dmg
       - uses: actions/upload-artifact@v4
         with:
-          name: fly-safe-windows-1.1.13
-          path: |
-            dist/Fly-Safe-Setup-1.1.13-x64.exe
-            dist/SHA256SUMS-windows.txt
+          name: fly-safe-${{ matrix.platform }}-1.1.14
+          path: dist/${{ matrix.asset }}
           if-no-files-found: error
 
   publish:
@@ -75,21 +84,19 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          name: fly-safe-windows-1.1.13
+          pattern: fly-safe-*-1.1.14
           path: release-assets
-      - name: Publish Windows installer and promote stable release
+          merge-multiple: true
+      - name: Publish latest stable release for both platforms
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download v1.1.13 --repo "$GITHUB_REPOSITORY" \
-            --pattern Fly-Safe-1.1.13-arm64.dmg --dir release-assets
           cd release-assets
-          echo '0fb794d78675420955a893b145a6701d6cf856a1872359c04c224fa2081d8aa0  Fly-Safe-1.1.13-arm64.dmg' | sha256sum --check
-          sha256sum --check SHA256SUMS-windows.txt
-          sha256sum Fly-Safe-1.1.13-arm64.dmg Fly-Safe-Setup-1.1.13-x64.exe > SHA256SUMS.txt
-          gh release upload v1.1.13 Fly-Safe-Setup-1.1.13-x64.exe --repo "$GITHUB_REPOSITORY"
-          gh release upload v1.1.13 SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber
-          cd ..
-          gh release edit v1.1.13 --repo "$GITHUB_REPOSITORY" \
-            --title 'Fly Safe 1.1.13' --notes-file PUBLISH-1.1.13.md \
-            --prerelease=false --latest=true
+          sha256sum Fly-Safe-1.1.14-arm64.dmg Fly-Safe-Setup-1.1.14-x64.exe > SHA256SUMS.txt
+          gh release create v1.1.14 \
+            Fly-Safe-1.1.14-arm64.dmg \
+            Fly-Safe-Setup-1.1.14-x64.exe \
+            SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title 'Fly Safe 1.1.14' --notes-file ../PUBLISH-1.1.14.md \
+            --latest=true
